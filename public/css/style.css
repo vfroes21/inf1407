@@ -21,10 +21,12 @@
     background: -webkit-linear-gradient(0deg, #3232fc 40%, #85e367 40%, #85e367 45%, #ff52e8 45%, #ff52e8 50%, #ff0151 50%, #ff0151 55%, #f9e52e 55%, #f9e52e 60%, #e8e8e8 60%);
     background-position: 330px;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-animation: screen-gameboy-text 3s infinite linear;
-    animation: screen-gameboy-text 3s infinite linear;
+    -webkit-animation: screen-gameboy-text 3s linear;
+    animation: screen-gameboy-text 3s linear;
   }
+
   @keyframes screen-gameboy-text {
     0% {
       color: #f9e52e;
@@ -82,17 +84,28 @@
     font-style: normal;
     text-align: center;
     right: 940px;
-    top: 450px;
+    top: 470px;
     overflow: hidden;
     white-space: nowrap;
     color: #ff52e8;
-    animation: fade_inout 3s;
+    animation: fade_inout 3s forwards;
   }
 
   @keyframes fade_inout {
     0% {opacity: 0;}
     50% {opacity: 1;}
-    100% {opacity: 0;}
+    100% {
+      opacity: 0;
+      display: none;
+    }
   }
 
+  #text{
+    position: absolute;
+    visibility: hidden;
+  }
 
+  #email{
+    position: absolute;
+    visibility: hidden;
+  }
