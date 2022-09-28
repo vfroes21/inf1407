@@ -9,10 +9,12 @@
     letter-spacing: -2px;
     text-align: center;
     opacity: 0;
-    width: 500px;
-    /*left: -250px;*/
-    right: 750px;
-    top: 300px;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%,-50%);
+  }
+
+  .animate_gb {
     -webkit-transform: skew(-5deg);
     transform: skew(-5deg);
     overflow: hidden;
@@ -83,16 +85,20 @@
     font-weight: 700;
     font-style: normal;
     text-align: center;
-    right: 940px;
-    top: 470px;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%,-50%);
     overflow: hidden;
     white-space: nowrap;
     color: #ff52e8;
+    opacity: 0;
+  }
+
+  .animate_a {
     animation: fade_inout 3s forwards;
   }
 
   @keyframes fade_inout {
-    0% {opacity: 0;}
     50% {opacity: 1;}
     100% {
       opacity: 0;
@@ -102,10 +108,14 @@
 
   #text{
     position: absolute;
-    visibility: hidden;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%,-50%);
   }
 
   #email{
     position: absolute;
-    visibility: hidden;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%,-50%);
   }

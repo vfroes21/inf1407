@@ -1,25 +1,7 @@
 // aguarda termino da animacao de introducao
 onload = function(){
-    setTimeout(show_validation, 3.1*1000);
-}
-
-function show_validation()
-{
-    let div_text = document.getElementById('text');
+    //setTimeout(show_validation, 3.1*1000);
     let email = document.getElementById('email');
-
-    // mostra texto
-    div_text.style.left = '50%';
-    div_text.style.top = '30%';
-    div_text.style.transform = 'translate(-50%,-50%)';
-    div_text.style.visibility = 'visible';
-
-    // posiciona texto E-mail
-    email.style.position = 'absolute';
-    email.style.left = '50%';
-    email.style.top = '40%';
-    email.style.transform = "translate(-50%,-50%)";
-    email.style.visibility = 'visible';
 
     let lb = document.createElement("br");
     email.appendChild(lb);
@@ -40,5 +22,9 @@ function show_validation()
 
 function validate()
 {
-    console.log("validate");
+    // if email valido
+    //document.getElementById();
+
+    document.getElementById('screen-gameboy-text').classList.add('animate_gb');
+    document.getElementById('author').classList.add('animate_a');
 }
