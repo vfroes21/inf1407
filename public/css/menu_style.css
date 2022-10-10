@@ -1,0 +1,41 @@
+#title{
+  font-family: 'Harlow Solid';
+  text-align: center;
+  font-size: 65px;
+  background: -webkit-linear-gradient(left,  #3232fc 30%,  #85e367,  #ff52e8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#block{
+  position: absolute;
+  width: 350px;
+  height: 220px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+#play{
+  width: 140px;
+}
+
+#music{
+  width: 140px;
+}
+
+#exit{
+  width: 140px;
+}
+
+#exit_text{
+  font-family: 'Harlow Solid';
+  text-align: center;
+  font-size: 65px;
+  background: -webkit-linear-gradient(left,  #3232fc 30%,  #85e367,  #ff52e8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  visibility: hidden;
+}
