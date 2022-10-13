@@ -1,4 +1,7 @@
 onload = function(){
+    bt_p = document.getElementById('play');
+    bt_p.addEventListener('click', start_game);
+
     bt_m = document.getElementById('music');
     bt_m.addEventListener('click', play_bgm);
 
@@ -12,6 +15,11 @@ onload = function(){
 function nEnvia(ev)
 {
     ev.preventDefault();
+}
+
+function start_game()
+{
+    location.replace('game.html');
 }
 
 function play_bgm()
