@@ -41,6 +41,7 @@ onload = function(){
     main_b.src = images[Math.floor(Math.random()*4)];
     current_mb_row = 6;
     rows_idx = current_bbs_row -1;      // indice para array rows apontando pro ultimo elem
+    //last_row_value = current_bbs_row;
 }
 
 function key_pressed(e)
@@ -61,22 +62,25 @@ function key_pressed(e)
 function find_place()
 {
     let d = document.getElementById('bb_' + current_bbs_row + current_mb_row%10);
-    let res = current_bbs_row, aux = current_bbs_row, c = 1;
-   
+    let res = aux = current_bbs_row, c = 1;
+    var str = 'bb_' + current_bbs_row + current_mb_row%10;
+    console.log('first found ' + str);
+
     while (!d)
     {
         res--;
-        d = document.getElementById('bb_' + (aux-c++) + current_mb_row%10);
-        console.log('while');
+        str = 'bb_' + (aux-c++) + current_mb_row%10;
+        console.log('then on loop ' + str);
+        d = document.getElementById(str);
     }
-    
+    console.log('vai ser inseridada em (-1)' + res);
     return res-1;
 }
 
 function shoot_mbubble(pos)    // a cada 5ms, bubble principal sobe 2px
 {
     let speed = 2, y = main_b.offsetTop;
-    
+   
     if (y>rows[pos])
     {
         y-=speed;
@@ -85,8 +89,9 @@ function shoot_mbubble(pos)    // a cada 5ms, bubble principal sobe 2px
 
     else
     {
+        console.log(rows[pos]);
         clearInterval(my_time);
-        pop_bubbles(pos);
+        pop_bubbles(pos+1);
     }     
 }
 
@@ -96,7 +101,7 @@ function pop_bubbles(pos)
 
     var bb_color = get_color(nxt_bb);
     var mb_color = get_color(main_b);
-    
+    console.log('bola acima da principal: ' + pos + current_mb_row%10, bb_color, mb_color);
     // se cores iguais
     if (bb_color === mb_color)
     {
@@ -106,16 +111,19 @@ function pop_bubbles(pos)
 
     else
     {
-        current_bbs_row++; rows_idx++;
-
+        if (pos == current_bbs_row)
+            current_bbs_row++; 
+        
+        rows_idx++;
+        console.log('pos: ' + pos + ' curr: ' + current_bbs_row);
         // cria nova bubble de mesma cor da principal
         let img = document.createElement('img');
 
         img.src = '../img/bubble-' + mb_color + '.png';
         img.style.width = '25px';
         img.style.position = 'absolute';
-        img.id = 'bb_' + current_bbs_row + current_mb_row;
-        
+        img.id = 'bb_' + (pos+1) + current_mb_row;
+        console.log('id da nova bubble ' + (pos+1) + current_mb_row);
         content.appendChild(img);
         
         // posiciona bubble nova
