@@ -7,7 +7,7 @@ images = [
 
 rows = [34, 65, 94, 124, 154, 184, 214, 244, 275, 304, 331, 357, 383, 409, 435, 460, 487, 513, 539];     // posicoes y de cada linha de bubbles
 cols = [2, 25, 50, 75, 100, 124, 149, 177, 202, 225];   // posicoes x das bubbles
-bubble_ammo = 30;
+bubble_ammo = 40;
 
 onload = function(){
     document.addEventListener('keyup', key_pressed);
@@ -87,10 +87,16 @@ function find_place()
             last_popped = str;
             
             console.log('then on sec loop ' + str);
+            console.log(last_popped);
             d = document.getElementById(str);
         }
     }
-    
+
+    if (passed_pop)
+    {
+        last_popped = 'bb_' + (res+1) + current_mb_row%10;
+        console.log('last popped: ' + last_popped);
+    }
     console.log('vai ser inserida em ' + res);
     return res-1;
 }
@@ -274,7 +280,7 @@ function pop_bubbles(c, pos)
 
             var l_bubble = document.getElementById('bb_' + pos + current_mb_row-1);
 
-            if (l_bubble)
+            if (l_bubble && l_bubble.style.visibility != 'hidden')
             {
                 let cor = get_color(l_bubble);
 
@@ -295,7 +301,7 @@ function pop_bubbles(c, pos)
 
             var r_bubble = document.getElementById('bb_' + pos + (current_mb_row+1));
         
-            if (r_bubble)
+            if (r_bubble && r_bubble.style.visibility != 'hidden')
             {
                 let cor = get_color(r_bubble);
 
@@ -310,12 +316,12 @@ function pop_bubbles(c, pos)
             else position_bubble(mb_color, pos);
         }
 
-        else if (current_mb_row > 1 && current_mb_row <= 9)
+        else
         {
-            var l_bubble = document.getElementById('bb_' + pos + current_mb_row-1);
+            var l_bubble = document.getElementById('bb_' + pos + (current_mb_row-1));
             var r_bubble = document.getElementById('bb_' + pos + (current_mb_row+1));
 
-            if (l_bubble && r_bubble)
+            if (l_bubble && r_bubble && (l_bubble.style.visibility != 'hidden' && r_bubble.style.visibility != 'hidden'))
             {
                 console.log('between two bubbles');
 
@@ -331,7 +337,7 @@ function pop_bubbles(c, pos)
 
             else if (!l_bubble || !r_bubble)
             {
-                if (l_bubble)
+                if (l_bubble && l_bubble.style.visibility != 'hidden')
                 {
                     let cor = get_color(l_bubble);
 
@@ -343,7 +349,7 @@ function pop_bubbles(c, pos)
                     else position_bubble(mb_color, pos);   
                 }
 
-                if (r_bubble)
+                if (r_bubble && r_bubble.style.visibility != 'hidden')
                 {
                     let cor = get_color(r_bubble);
 
