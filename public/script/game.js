@@ -5,7 +5,7 @@ images = [
     '../img/bubble-y.png'
 ]
 
-rows = [34, 65, 94, 124, 154, 184, 214, 244, 274, 304, 331, 357, 383, 409, 435, 460, 487, 513, 539];     // posicoes y de cada linha de bubbles
+rows = [34, 65, 94, 124, 154, 184, 214, 244, 275, 304, 331, 357, 383, 409, 435, 460, 487, 513, 539];     // posicoes y de cada linha de bubbles
 cols = [2, 25, 50, 75, 100, 124, 149, 177, 202, 225];   // posicoes x das bubbles
 bubble_ammo = 30;
 
@@ -40,7 +40,6 @@ onload = function(){
     main_b = document.getElementById('main');
     main_b.src = images[Math.floor(Math.random()*4)];
     current_mb_row = 6;
-    rows_idx = current_bbs_row -1;      // indice para array rows apontando pro ultimo elem
 }
 
 function key_pressed(e)
@@ -63,6 +62,8 @@ function find_place()
     let d = document.getElementById('bb_' + current_bbs_row + current_mb_row%10);
     let res = aux = current_bbs_row, c = 1;
     var str = 'bb_' + current_bbs_row + current_mb_row%10;
+    passed_pop = false;     // passou por bubbles estouradas?
+
     console.log('first found ' + str);
 
     // pula espacos em branco
@@ -75,15 +76,22 @@ function find_place()
     }
 
     // pula bubbles estouradas
-    while (d.style.visibility == 'hidden')
+    if (d.style.visibility == 'hidden')
     {
-        res--;
-        str = 'bb_' + (aux-c++) + current_mb_row%10;
-        console.log('then on sec loop ' + str);
-        d = document.getElementById(str);
-    }
+        passed_pop = true;
 
-    console.log('vai ser inserida em (-1)' + res);
+        while (d.style.visibility == 'hidden')
+        {
+            res--;
+            str = 'bb_' + (aux-c++) + current_mb_row%10;
+            last_popped = str;
+            
+            console.log('then on sec loop ' + str);
+            d = document.getElementById(str);
+        }
+    }
+    
+    console.log('vai ser inserida em ' + res);
     return res-1;
 }
 
@@ -99,66 +107,259 @@ function shoot_mbubble(pos)    // a cada 5ms, bubble principal sobe 2px
 
     else
     {
-        console.log(rows[pos]);
+        console.log('shoot at ' + rows[pos]);
+
         clearInterval(my_time);
-        pop_bubbles(pos+1);
+        let c = bubble_case(pos+1);
+        pop_bubbles(c, pos+1);
+        
+        bubble_ammo--;
     }     
 }
 
-function pop_bubbles(pos)
+function bubble_case(pos)
+{
+    console.log('checking bubble case');
+
+    if (current_mb_row == 1)
+    {
+        console.log('on left corner, searching on right: ' +  (pos+1) + '' + current_mb_row%10);
+        
+        let bb_right = document.getElementById('bb_' + (pos+1) + current_mb_row%10);
+        
+        if (bb_right)
+        {
+            let color = get_color(bb_right);
+            console.log('found neighbor of color ' + color + ', returning c2');
+
+            return 'c2';
+        }
+        
+        else
+        {
+            console.log('no neighbor, returning c1');
+            
+            return 'c1';
+        }
+    }
+
+    else if (current_mb_row == 10)
+    {
+        console.log('on right corner, searching on left ' + (pos+1) + '' + 9);
+        
+        let bb_left = document.getElementById('bb_' + (pos+1) + 9);
+        
+        if (bb_left)
+        {
+            let color = get_color(bb_left);
+            console.log('found neighbor of color ' + color + ', returning c4');
+            
+            return 'c4';
+        }
+
+        else
+        {
+            console.log('no neighbor, returning c3');
+
+            return 'c3';
+        }
+    }
+    
+    else
+    {
+        console.log('no corner, looking for ' + (pos+1) + (current_mb_row-1)%10 + ' and ' + (pos+1) + (current_mb_row+1)%10);
+        
+        let bb_left = document.getElementById('bb_' + (pos+1) + (current_mb_row-1)%10);
+        let bb_right = document.getElementById('bb_' + (pos+1) + (current_mb_row+1)%10);
+
+        // 3 casos: bb_left e right nao nulos, bb_left right nulos, somente um dos dois nulos
+        if (!bb_left && !bb_right)
+        {
+            console.log('no neighbors, returning n1');
+
+            return 'n1';
+        }
+
+        else if (bb_left && bb_right)
+        {
+            console.log('both are neighbors, returning n2');
+            
+            return 'n2';
+        }
+        
+        else if (!bb_left || !bb_right)
+        {
+            console.log('left or right null');
+            
+            if (bb_left)
+            {
+                console.log('only left neighbor, returning n3');
+
+                return 'n3';
+            }
+
+            if (bb_right)
+            {
+                console.log('only right neighbor, returning n4');
+
+                return 'n4';
+            }   
+        }  
+    }
+}   
+
+function pop_bubbles(c, pos)
 {
     var nxt_bb = document.getElementById('bb_'+ pos + current_mb_row%10);
 
     var bb_color = get_color(nxt_bb);
     var mb_color = get_color(main_b);
+    
     console.log('bola acima da principal: ' + pos + current_mb_row%10, bb_color, mb_color);
-    // se cores iguais
+
+    
     if (bb_color === mb_color)
     {
-        if (nxt_bb.style.visibility != 'hidden')
+        switch(c)
         {
-            nxt_bb.style.visibility = 'hidden';
-        
-            search_bb_v(bb_color, pos);
-            console.log('calling vertical with ' + current_mb_row%10);
-            search_bb_h(bb_color, pos, current_mb_row%10);
-        
-            mb_back_to_orig();
-        }
+            case 'n1':
+            {   console.log('vertical search in n1');
+                
+                search_bb_v(mb_color, pos, current_mb_row%10);
+       
+                break;        
+            }
+            
+            case 'c1':
+            {
+                console.log('vertical search in c1');
 
-        else
-            console.log('ainda em pop bubbles already hidden');
+                search_bb_v(mb_color, pos, current_mb_row%10);
+
+                break;
+            }
+
+            case 'c3':
+            {
+                console.log('vertical search in c3');
+
+                search_bb_v(mb_color, pos, current_mb_row%10);
+
+                break;
+            }
+
+            case 'n2':
+            case 'n3':
+            case 'n4':
+            case 'c2':
+            case 'c4':
+            {
+                console.log(c + ' horizontal on neighbor and vertical above');
+                
+                search_bb_h(mb_color, (pos+1), current_mb_row%10);
+                search_bb_v(mb_color, pos, current_mb_row%10);
+                
+                break;
+            }
+        }
     }
 
     else
     {
-        if (pos == current_bbs_row)
-            current_bbs_row++; 
+        console.log('on pop bubbles above dont match');
+
+        if ((current_mb_row)%10 == 0)
+        {
+            console.log('on right corner');
+
+            var l_bubble = document.getElementById('bb_' + pos + current_mb_row-1);
+
+            if (l_bubble)
+            {
+                let cor = get_color(l_bubble);
+
+                if (mb_color === cor)
+                {
+                    console.log('left color match');
+                    search_bb_h(mb_color, (pos+1), current_mb_row%10);   
+                }
+                else position_bubble(mb_color, pos);
+            }
+
+            else position_bubble(mb_color, pos);
+        }
+
+        else if (current_mb_row == 1)
+        {
+            console.log('on left corner');
+
+            var r_bubble = document.getElementById('bb_' + pos + (current_mb_row+1));
         
-        rows_idx++;
-        console.log('pos: ' + pos + ' curr: ' + current_bbs_row);
+            if (r_bubble)
+            {
+                let cor = get_color(r_bubble);
 
-        // cria nova bubble de mesma cor da principal
-        let img = document.createElement('img');
+                if (mb_color === cor)
+                {
+                    console.log('right color match');
+                    search_bb_h(mb_color, (pos+1), current_mb_row%10);
+                }
+                else position_bubble(mb_color, pos);
+            }
 
-        img.src = '../img/bubble-' + mb_color + '.png';
-        img.style.width = '25px';
-        img.style.position = 'absolute';
-        img.id = 'bb_' + (pos+1) + current_mb_row;
-        console.log('id da nova bubble ' + (pos+1) + current_mb_row);
-        content.appendChild(img);
-        
-        // posiciona bubble nova
-        let r = main_b.getBoundingClientRect();
+            else position_bubble(mb_color, pos);
+        }
 
-        img.style.top = (r.top + window.scrollY - 7) + 'px';
-        img.style.left = cols[current_mb_row-1] + 'px';
-        console.log('left: ' + cols[current_mb_row-1]);
-        
-        mb_back_to_orig();
+        else if (current_mb_row > 1 && current_mb_row <= 9)
+        {
+            var l_bubble = document.getElementById('bb_' + pos + current_mb_row-1);
+            var r_bubble = document.getElementById('bb_' + pos + (current_mb_row+1));
 
-        bubble_ammo--;
+            if (l_bubble && r_bubble)
+            {
+                console.log('between two bubbles');
+
+                let l_cor = get_color(l_bubble);
+                let r_cor = get_color(r_bubble);
+
+                if (mb_color != l_cor && mb_color != r_cor)
+                    position_bubble(mb_color, pos);
+                
+                else
+                    search_bb_h(mb_color, (pos+1), current_mb_row%10);
+            }
+
+            else if (!l_bubble || !r_bubble)
+            {
+                if (l_bubble)
+                {
+                    let cor = get_color(l_bubble);
+
+                    if (mb_color === cor)
+                    {
+                        console.log('left color match');
+                        search_bb_h(mb_color, (pos+1), current_mb_row%10);   
+                    }
+                    else position_bubble(mb_color, pos);   
+                }
+
+                if (r_bubble)
+                {
+                    let cor = get_color(r_bubble);
+
+                    if (mb_color === cor)
+                    {
+                        console.log('right color match');
+                        search_bb_h(mb_color, (pos+1), current_mb_row%10);
+                    }
+                    else position_bubble(mb_color, pos);
+                }
+            }
+            else position_bubble(mb_color, pos);
+        }
     }
+
+    mb_back_to_orig();
 }
 
 function move_mb(dir)   // posiciona bubble principal mirando na bubble da coluna anterior ou proxima
@@ -203,209 +404,61 @@ function get_color(bb)
 function search_bb_h(color, y, x)
 {
     console.log('current_mb_row: ' + current_mb_row);
-    console.log('received ' + color + ' and ' +y+ ' and ' +x);
+    console.log('received color: ' + color + ', and ' +y+ ' and ' +x);
 
-    if (current_mb_row == 1)
+    if (x == 1)
     {
-        console.log('search color of right ' +  y + '' + (x+1));
-        
-        let bb_right = document.getElementById('bb_' + y + (x+1));
-        
-        if (bb_right)
-        {
-            let cor = get_color(bb_right);
-
-            if (cor === color)
-            {
-                if (bb_right.style.visibility != 'hidden')
-                {
-                    bb_right.style.visibility = 'hidden';
-                    console.log('right popped, will search for' + y + (x+1));
-                    search_bb_h(color, y, x+1);
-                }
-
-                else
-                    console.log('bb_' + y + (x+1)%10 + ' already hidden');
-            }
-        }
-        else
-            console.log('searching for right not found');
+        search_right(color, y, x);
     }
-
-    else if (current_mb_row == 10)
+    
+    else if (x == 0)
     {
-        console.log('search color of left ' + y + '' + 9);
-        
-        let bb_left = document.getElementById('bb_' + y + 9);
-        
-        if (bb_left)
-        {
-            let cor = get_color(bb_left);
-
-            if (cor === color)
-            {
-                if (bb_left.style.visibility != 'hidden')
-                {
-                    bb_left.style.visibility = 'hidden';
-                    console.log('left popped, will search for' + y + 8);
-                    search_bb_h(color, y, 8);
-                }
-
-                else
-                    console.log('bb_' + y + 9 + ' already hidden');
-            }
-        }
-        else
-            console.log('searching for left not found');
+        search_left(color, y, x);
     }
-
+    
     else
     {
-        let doc = document.getElementById('bb_' + y + x);
-        let my_color = get_color(doc); 
-        
-        if (my_color != color)
-            console.log('my color dont match');
+        console.log('search color of ' + y + (x-1)%10 + ' and ' + y + (x+1)%10);
+            
+        let bb_left = document.getElementById('bb_' + y + (x-1)%10);
+        let bb_right = document.getElementById('bb_' + y + (x+1)%10);   
 
-        else
+        if (bb_left)
         {
-            console.log('search color of ' + y + (x-1)%10 + ' and ' + y + (x+1)%10);
-            
-            let bb_left = document.getElementById('bb_' + y + (x-1)%10);
-            let bb_right = document.getElementById('bb_' + y + (x+1)%10);
+            search_left(color, y, x);
+        }
 
-
-            // 3 casos: bb_left e right nao nulos, bb_left right nulos, somente um dos dois nulos
-            if (bb_left && bb_right)
-            {
-                console.log('both not null');
-                let cor_l = get_color(bb_left);
-                let cor_r = get_color(bb_right);
-            
-                if (cor_l === color && cor_r === color)
-                {
-                    console.log('both color match');
-                    if (bb_left.style.visibility != 'hidden')
-                    {
-                        bb_left.style.visibility = 'hidden';
-                        console.log('popped right (both color case)');
-                        search_bb_h(color, y, x+1);
-                        search_bb_h(color, y, x-1);
-                    }
-
-                    if (bb_right.style.visibility != 'hidden')
-                    {
-                        bb_right.style.visibility = 'hidden';
-                        console.log('popped left (both color case)');
-                        search_bb_h(color, y, x+1);
-                        search_bb_h(color, y, x-1);
-                    }
-                }
-
-                else
-                {
-                    if (cor_l === color)
-                    {
-                        console.log('left color match');
-                        if (bb_left.style.visibility != 'hidden')
-                        {
-                            bb_left.style.visibility = 'hidden';
-
-                            search_bb_h(color, y, x+1);
-                            search_bb_h(color, y, x-1);
-                        }
-                        else
-                            console.log('but left already hidden');
-                    }
-
-                    else if (cor_r === color)
-                    {
-                        console.log('right color match');
-                        if (bb_right.style.visibility != 'hidden')
-                        {
-                            bb_right.style.visibility = 'hidden';
-
-                            search_bb_h(color, y, x+1);
-                            search_bb_h(color, y, x-1);
-                        }
-                        else
-                            console.log('but right already hidden');
-
-                    }
-                }
-            }
-
-            else if (!bb_left && !bb_right)
-            {
-                console.log('left and right null');
-            }
-
-            else if (!bb_left || !bb_right)
-            {
-                if (bb_left)
-                {
-                    let cor_l = get_color(bb_left);
-
-                    if (cor_l === color)
-                    {
-                        if (bb_left.style.visibility != 'hidden')
-                        {
-                             bb_left.style.visibility = 'hidden';
-                             search_bb_h(color, y, x+1);
-                        }
-
-                        else
-                            console.log('bb_' + y + (x-1)%10 + ' already hidden');
-                    }
-                }
-
-                if (bb_right)
-                {
-                    let cor_r = get_color(bb_right);
-
-                    if (cor_r === color)
-                    {
-                        if (bb_right.style.visibility != 'hidden')
-                        {
-                            bb_right.style.visibility = 'hidden';
-                            search_bb_h(color, y, x-1);
-                        }
-
-                        else
-                            console.log('bb_' + y + (x+1)%10 + ' already hidden');
-                    }
-                }   
-            }    
+        if (bb_right)
+        {
+            search_right(color, y, x);
         }
     }   
 }   
 
-function search_bb_v(color, pos)
+function search_bb_v(color, pos, x)
 {
-    
-    console.log('search color of ' + (pos-1) + current_mb_row%10);
-    var next_bb = document.getElementById('bb_' + (pos-1) + current_mb_row%10);
+    console.log('search color of ' + pos + x);
+
+    var next_bb = document.getElementById('bb_' + pos + x);
     
     if (next_bb)
     {
         var cor = get_color(next_bb);
  
-        if (cor === color)
+        if (next_bb.style.visibility != 'hidden')
         {
-            console.log('horizontal color match');
-
-            if (next_bb.style.visibility != 'hidden')
+            if (cor === color)
             {
-                next_bb.style.visibility = 'hidden';
-                search_bb_v(color, pos-1);
-                search_bb_h(color, pos-1, current_mb_row%10);
-            }
+                console.log('vertical color match');
 
-            else
-                console.log('but horizontal already hidden');
+                next_bb.style.visibility = 'hidden';
+                
+                search_bb_h(color, pos, x);
+                search_bb_v(color, pos-1, x);       
+            }
+            else console.log('vertical color doesnt match');
         }
-        else
-            console.log('horizontal color dont match');
+        else console.log('vertical already hidden');
     }
 }
 
@@ -416,4 +469,137 @@ function mb_back_to_orig()
     main_b.style.left = '50%';
     main_b.src = images[Math.floor(Math.random()*4)];
     current_mb_row = 6;
+}
+
+function search_left(color, y, x)
+{
+    if (x == 0) x = 10;
+    
+    console.log('search color of left ' + y + '' + (x-1)%10);     
+    
+    let bb_left = document.getElementById('bb_' + y + (--x)%10);
+    
+    while (bb_left && bb_left.style.visibility != 'hidden')
+    {
+        let cor = get_color(bb_left);
+        if (cor === color)
+        {
+            bb_left.style.visibility = 'hidden';
+
+            console.log('left popped, will search vertically and for ' + y + (x-1));
+            search_bb_v(color, y-1, x);
+            search_down(color, y+1, x);
+
+            x--;
+
+            bb_left = document.getElementById('bb_' + y + x);
+            if (x == 0) break;
+        }
+        else 
+        {
+            console.log('left color doesnt match');
+            break;
+        }
+    }
+}
+
+function search_right(color, y, x)
+{
+    console.log('search color of right ' +  y + '' + (x+1)%10);
+        
+    let bb_right = document.getElementById('bb_' + y + (++x)%10);
+        
+    while (bb_right && bb_right.style.visibility != 'hidden')
+    {
+        let cor = get_color(bb_right);
+        if (cor === color)
+        {
+            bb_right.style.visibility = 'hidden';
+           
+            console.log('right popped, will search vertically and for ' + y + (x+1)%10);
+
+            search_bb_v(color, y-1, x);
+            search_down(color, y+1, x);
+
+            x++;
+            
+            if (x == 10) x = 0;
+            if (x == 1) break;
+            
+            bb_right = document.getElementById('bb_' + y + x);
+        }
+        else
+        {
+            console.log('right color doesnt match');
+            break;
+        }    
+    }
+}
+
+function search_down(color, pos, x)
+{
+    console.log('(down) search color of ' + pos + x);
+
+    var next_bb = document.getElementById('bb_' + pos + x);
+    
+    if (next_bb)
+    {
+        var cor = get_color(next_bb);
+ 
+        if (next_bb.style.visibility != 'hidden')
+        {
+            if (cor === color)
+            {
+                console.log('vertical color match on below');
+
+                next_bb.style.visibility = 'hidden';
+                
+                search_bb_h(color, pos, x);
+                search_bb_v(color, pos+1, x);       
+            }
+            else console.log('vertical color below doesnt match');
+        }
+        else console.log('vertical below already hidden');
+    }
+}
+
+function position_bubble(color, pos)
+{
+    if (!passed_pop)
+    {
+        if (pos == current_bbs_row)
+            current_bbs_row++; 
+        
+        console.log('pos: ' + pos + ' curr: ' + current_bbs_row);
+
+        // cria nova bubble de mesma cor da principal
+        let img = document.createElement('img');
+
+        img.src = '../img/bubble-' + color + '.png';
+        img.style.width = '25px';
+        img.style.position = 'absolute';
+        img.id = 'bb_' + (pos+1) + current_mb_row%10;
+                    
+        console.log('id da nova bubble ' + (pos+1) + current_mb_row%10);
+                    
+        content.appendChild(img);
+
+        // posiciona bubble nova
+        let r = main_b.getBoundingClientRect();
+
+        img.style.top = (r.top + window.scrollY - 7) + 'px';
+        img.style.left = cols[current_mb_row-1] + 'px';
+        console.log('left: ' + cols[current_mb_row-1]);
+    }
+
+    else
+    {
+        let bb = document.getElementById(last_popped);
+        console.log(last_popped + ' invisivel');
+
+        bb.src = '../img/bubble-' + color + '.png';
+        bb.style.visibility = 'visible';
+
+        console.log('ficou visivel e assumiu cor ' + color);
+    }
 }
