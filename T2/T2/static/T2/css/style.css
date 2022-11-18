@@ -1,0 +1,26 @@
+#bg{
+    background-color: rgb(243, 243, 243);
+}
+
+#block{
+    position: absolute;
+    width: 350px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    box-shadow: 1px 5px 30px rgb(195, 195, 195);
+}
+
+#text{
+    text-align: center;
+}
+
+#email_bt{
+    padding: 7px 10px;
+    left: 4px;
+}
+
+.form th{
+    text-align: right;
+    vertical-align: text-top;
+}
