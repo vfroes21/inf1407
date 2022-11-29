@@ -1,26 +1,55 @@
-#bg{
-    background-color: rgb(243, 243, 243);
-}
+@charset "UTF-8";
 
-#block{
+#text{
     position: absolute;
-    width: 350px;
-    top: 50%;
+    text-align: center;
+    top: 40%;
     left: 50%;
     transform: translate(-50%,-50%);
+}
+
+#bt_exp{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    /*box-shadow: 1px 5px 30px rgb(195, 195, 195);*/
+}
+
+#bt_reg{
+    position: absolute; 
+    left: 45%; 
+    top: 85%;
+}
+
+#bt_login{
+    position: absolute; 
+    left: 40%; 
+    top: 75%;
+}
+
+.card{
+    position: absolute;
+    width: 750px;
+    height: 400px;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    align-items: center;
+    justify-content: center;
     box-shadow: 1px 5px 30px rgb(195, 195, 195);
 }
 
-#text{
-    text-align: center;
+.helptext{
+    font-size: 12px;
 }
 
-#email_bt{
-    padding: 7px 10px;
-    left: 4px;
+.errorlist{
+    color: #FF0000;
+    list-style-type: none;
 }
 
-.form th{
+.formulario th{
     text-align: right;
     vertical-align: text-top;
 }

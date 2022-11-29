@@ -20,5 +20,7 @@ from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', LoginView.as_view(template_name='registro/home.html'), name='reg-inicial'),
+    path('', LoginView.as_view(template_name='registro/home.html'), name='home'),
+    path('accounts/registro/', views.registro, name='sec-registro'),
+    path('accounts/login/', LoginView.as_view(template_name='registro/login.html'), name='sec-login'),
 ]
