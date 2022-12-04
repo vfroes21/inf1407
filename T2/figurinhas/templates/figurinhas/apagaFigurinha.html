@@ -1,0 +1,16 @@
+{% extends 'registro/base.html' %}
+{% block title %}Apagar Figurinha{% endblock %}
+
+{% block content %}
+<h3>Tem certeza?</h3>
+<form class="card" method="POST" style="height: 200px; width: 400px;">
+    {% csrf_token %}
+    Você realmente deseja apagar a figurinha {{ figurinha }}?<br/><br/>
+    <div>
+        <input class="btn btn-success" type="submit" value="Apagar">&nbsp;
+        <button class="btn btn-danger">
+            <a href="{% url 'figurinhas:sec-figurinhas-perfil' %}" style="text-decoration: none; color: white;">Cancelar ação</a>
+        </button>
+    </div>
+</form>
+{% endblock %}

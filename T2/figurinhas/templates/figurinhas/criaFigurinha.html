@@ -1,0 +1,15 @@
+{% extends 'registro/base.html' %}
+{% block title %}Cadastrar Figurinha{% endblock %}
+
+{% block content %}
+<h3>Cadastrar Figurinha Nova</h3>
+<div class="card" style="width: 640px; height: 415px;">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table class="formulario">
+            {{ formulario.as_table }}
+        </table>
+        <button type="submit" class="btn btn-success" id="submit_newf">Cadastrar</button>
+    </form>
+</div>
+{% endblock %}

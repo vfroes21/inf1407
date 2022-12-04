@@ -1,0 +1,18 @@
+{% extends 'registro/base.html' %}
+{% block title %}Atualiza figurinha{% endblock %}
+
+{% block content %}
+<h3>Atualizar dados da figurinha</h3>
+<div class="card" style="width: 640px; height: 415px;">
+    <form method="POST" class="formulario">
+        {% csrf_token %}
+        <table>
+            {{ figurinha.as_table }}
+            <tr>
+                <td></td>
+                <td><input type="submit" class="btn btn-success" value="Atualizar" id="bt_att"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+{% endblock %}

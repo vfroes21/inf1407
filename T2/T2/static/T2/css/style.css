@@ -30,8 +30,6 @@
 
 .card{
     position: absolute;
-    width: 750px;
-    height: 400px;
     top: 55%;
     left: 50%;
     transform: translate(-50%,-50%);
@@ -52,4 +50,24 @@
 .formulario th{
     text-align: right;
     vertical-align: text-top;
+}
+
+#new_fig {
+    position: absolute; 
+    left: 50%;
+    padding: 1px 3px;
+}
+
+#submit_newf, #bt_att {
+    position: absolute; 
+    left: 45%;
+    top: 88%;
+}
+
+#figurinhas {
+    position: absolute;
+    width: 750px;
+    top: 35%;
+    left: 28%;
+    box-shadow: 1px 5px 30px rgb(195, 195, 195);
 }

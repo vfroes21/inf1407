@@ -1,0 +1,27 @@
+{% extends 'registro/base.html' %}
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<h3 style="display: inline;">Suas Figurinhas</h3>&nbsp;&nbsp;&nbsp;&nbsp;{{ user.username }}<br/><br/><br/>
+<form action="{% url 'figurinhas:sec-figurinhas-nova' %}">
+    {% csrf_token %}
+    <input class="btn btn-success" type="submit" value="Nova Figurinha" id="new_fig" style="padding: 7px 10px;">
+</form>
+{% if figurinhas %}
+    <table class="table table-bordered" id="figurinhas">
+        <tr style="text-align: center;"><th>Tipo</th><th>Nome</th><th>Código</th><th>País</th><th>Quantidade</th><th>Ações</th></tr>
+        {% for figurinha in figurinhas %}
+        <tr style="text-align: center;">
+            <td>{{ figurinha.tipo }}</td><td>{{ figurinha.nome }}</td><td>{{ figurinha.codigo }}</td><td>{{ figurinha.pais }}</td><td>{{ figurinha.quantidade }}</td>
+            <td>
+                <a href="{% url 'figurinhas:sec-figurinhas-atualiza' pk=figurinha.id %}">Atualizar</a> |
+                <a href="{% url 'figurinhas:sec-figurinhas-apaga' pk=figurinha.id %}">Excluir</a>
+            </td>
+        </tr>
+    </table>
+    {% endfor %}
+{% else %}
+    <p style="position:absolute; top: 45%; left: 35%;">Você ainda não possui figurinhas cadastradas. Que tal cadastrar a primeira?</p>
+{% endif %}
+
+{% endblock %}

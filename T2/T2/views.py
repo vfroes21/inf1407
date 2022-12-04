@@ -10,8 +10,11 @@ def registro(request):
         if formulario.is_valid():
             formulario.save()
             return redirect('home')
-    else:
-        formulario = UserCreationForm()
-        context = {'form': formulario}
+
+    formulario = UserCreationForm()
+    context = {'form': formulario}
         
-        return render(request, 'registro/registro.html', context)
+    return render(request, 'registro/registro.html', context)
+
+def profile(request):
+    return render(request, 'registro/perfil.html')
