@@ -27,4 +27,5 @@ urlpatterns = [
     path('accounts/login/', LoginView.as_view(template_name='registro/login.html'), name='sec-login'),
     path('accounts/figurinhas/', include('figurinhas.urls')),
     path('accounts/logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='sec-logout'),
+    path('accounts/registro/verify-user/', views.verificaUser, name='sec-verify-user'),
 ]

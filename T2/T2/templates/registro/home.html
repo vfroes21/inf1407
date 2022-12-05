@@ -4,7 +4,6 @@
 {% block content %}
 <h2 id="text">A melhor opção para completar seu álbum.</h2>
 <form action="{% url 'sec-login' %}">
-    {% csrf_token %}
-    <input type="submit" class="btn btn-success btn-lg" id="bt_exp" value="Explorar"> <!--TODO arrumar aqui-->
+    <input type="submit" class="btn btn-success btn-lg" id="bt_exp" value="Explorar">
 </form>
 {% endblock %}
